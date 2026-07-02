@@ -15,8 +15,8 @@ def Registro_Jugadores():
 
     EOF = False
 
-    Respuesta = True
-    while (Respuesta == True):
+    Respuesta = "S" #Cambiar a Booleano despues.
+    while (Respuesta == 'S' or Respuesta == 's'):
         CedulaJugador = str(input("Ingrese su Cedula: "))
         NombreJugador = str(input("Ingrese su Nombre de Usuario: "))
         SexoJugador = str(input("Ingrese su Sexo: "))
@@ -56,7 +56,13 @@ def Registro_Jugadores():
         FechaCodificada = FechaJugador.ljust(10).encode('utf-8')
         InicialCodificada = InicialEstado.ljust(3).encode('utf-8')
         EstadoCodificado = EstadoJugador.ljust(20).encode('utf-8')
-        ClaveCodificada = ClaveJugador
+        ClaveCodificada = ClaveJugador.ljust(30).encode('utf-8')
 
-        Registro_Binario = struct.pack(Formato_Registro, CedulaCodificada, NombreCodificado, SexoCodificado, FechaCodificada, InicialCodificada, EstadoCodificado, ClaveJugador)
+        Registro_Binario = struct.pack(Formato_Registro, CedulaCodificada, NombreCodificado, SexoCodificado, FechaCodificada, InicialCodificada, EstadoCodificado, ClaveCodificada)
+        REG_Jugadores.write(Registro_Binario)
+
+        print("="*5 +f"El usuario [{NombreJugador}] ha sido registrado exitosamente." "="*5)
+        print("\n")
+
+        Respuesta = input("¿Desea registrar otro usuario? [S/N]: ")
         
