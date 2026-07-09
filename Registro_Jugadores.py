@@ -61,7 +61,7 @@ def Registro_Jugadores():
         Registro_Binario = struct.pack(Formato_Registro, CedulaCodificada, NombreCodificado, SexoCodificado, FechaCodificada, InicialCodificada, EstadoCodificado, ClaveCodificada)
         REG_Jugadores.write(Registro_Binario)
 
-        print("="*5 +f"El usuario [{NombreJugador}] ha sido registrado exitosamente." "="*5)
+        print("="*5 + f"El usuario [{NombreJugador}] ha sido registrado exitosamente." + "="*5)
         print("\n")
 
         Respuesta = input("¿Desea registrar otro usuario? [S/N]: ")
