@@ -1,6 +1,5 @@
 import struct
 import datetime
-import pygame
 
 def Registro_Jugadores():
     Formato_Registro = '8s30s1s10s3s30s'
@@ -8,8 +7,8 @@ def Registro_Jugadores():
     FR_Estados = '20s3s'
     TR_Estados = struct.calcsize(FR_Estados)
 
-    AF_REGJugadores = "REG_JUGADORES.bin"
-    REG_Jugadores = open(AF_REGJugadores, 'wb')
+    AF_JUGADORES = "JUGADORES.bin"
+    JUGADORES = open(AF_JUGADORES, 'wb')
     AF_Estados = "Estados.bin"
     Estados = open(AF_Estados, 'rb')
 
@@ -59,7 +58,7 @@ def Registro_Jugadores():
         ClaveCodificada = ClaveJugador.ljust(30).encode('utf-8')
 
         Registro_Binario = struct.pack(Formato_Registro, CedulaCodificada, NombreCodificado, SexoCodificado, FechaCodificada, InicialCodificada, EstadoCodificado, ClaveCodificada)
-        REG_Jugadores.write(Registro_Binario)
+        JUGADORES.write(Registro_Binario)
 
         print("="*5 + f"El usuario [{NombreJugador}] ha sido registrado exitosamente." + "="*5)
         print("\n")
