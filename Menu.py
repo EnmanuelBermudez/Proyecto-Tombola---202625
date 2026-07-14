@@ -35,9 +35,9 @@ VOLVER_AL_MENU_img = Boton("Assets/Boton-Volver-al-Menu.png", (143,149), (20, 20
 Fondo_Menu_Registro_img = pygame.image.load("Assets/Fondo-Menu-Registro.png").convert()
 Fondo_Menu_Registro_img = pygame.transform.scale(Fondo_Menu_Registro_img, (1280, 720))
 
-VOLVER_AL_INICIO_img = Boton("Assets/Boton-Volver-al-INICIO.png", (143,149), (20, 20), "Assets/Sonido-Boton-Click.mp3")
+VOLVER_AL_INICIO_img = Boton("Assets/Boton-Volver-al-Inicio.png", (143,149), (20, 20), "Assets/Sonido-Boton-Click.mp3")
 
-ACEPTAR_img = Boton("Assets/Boton-Aceptar.png", (143, 149), (1111, 20), "Assets/Sonido-Boton-Click.mp3")
+ACEPTAR_img = Boton("Assets/Boton-Aceptar.png", (131, 149), (1111, 20), "Assets/Sonido-Boton-Click.mp3")
 
 Fuente = pygame.font.Font("Assets/ElmsSans-Medium.ttf", 30)
 Fuente_Negrita = pygame.font.Font("Assets/ElmsSans-ExtraBold.ttf", 30)
@@ -239,6 +239,9 @@ while Corriendo:
 
                 Posicion_Y = Posicion_Y + 60
 
+        elif (Escena_Actual == Escena_Seleccion_Tarjetas):
+            if (VOLVER_AL_INICIO_img.Es_Presionado):
+                Escena_Actual = Escena_Inicio
 
         elif (Escena_Actual == Escena_Registro):
             if (VOLVER_AL_MENU_img.Es_Presionado(event)):
@@ -277,6 +280,10 @@ while Corriendo:
         Fecha_Input.Dibujo(Ventana)
         Inicial_Input.Dibujo(Ventana)
         Clave_Input.Dibujo(Ventana)
+    
+    elif (Escena_Actual == Escena_Seleccion_Tarjetas):
+        Ventana.blit(Fondo_Menu_Inicio_img, (0, 0))
+        VOLVER_AL_INICIO_img.Dibujo(Ventana)
 
     elif (Escena_Actual == Escena_Registro):
         Ventana.blit(Fondo_Menu_Inicio_img, (0, 0))
