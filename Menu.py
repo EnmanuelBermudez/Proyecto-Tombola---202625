@@ -1,4 +1,4 @@
-import pygame, struct, sys, os, Registro_Jugadores, reto2, reto3
+import pygame, struct, sys, os, Registro_Jugadores, reto2, reto3, Main
 from Config_Botones import Boton
 from Config_Reg_Jugadores import Dato_Jugador
 
@@ -39,6 +39,29 @@ VOLVER_AL_INICIO_img = Boton("Assets/Boton-Volver-al-Inicio.png", (143,149), (20
 
 ACEPTAR_img = Boton("Assets/Boton-Aceptar.png", (131, 149), (1111, 20), "Assets/Sonido-Boton-Click.mp3")
 
+Seleccion_1_img = Boton("Assets/Boton-Seleccion-1.png", (446, 262), (182, 140), "Assets/Sonido-Boton-Click.mp3")
+Seleccion_2_img = Boton("Assets/Boton-Seleccion-2.png", (446, 262), (650, 140), "Assets/Sonido-Boton-Click.mp3")
+Seleccion_3_img = Boton("Assets/Boton-Seleccion-3.png", (446, 262), (182, 422), "Assets/Sonido-Boton-Click.mp3")
+Seleccion_4_img = Boton("Assets/Boton-Seleccion-4.png", (446, 262), (650, 422), "Assets/Sonido-Boton-Click.mp3")
+Seleccion_5_img = Boton("Assets/Boton-Seleccion-5.png", (446, 262), (182, 704), "Assets/Sonido-Boton-Click.mp3")
+Seleccion_6_img = Boton("Assets/Boton-Seleccion-6.png", (446, 262), (650, 704), "Assets/Sonido-Boton-Click.mp3")
+Seleccion_7_img = Boton("Assets/Boton-Seleccion-7.png", (446, 262), (182, 986), "Assets/Sonido-Boton-Click.mp3")
+Seleccion_8_img = Boton("Assets/Boton-Seleccion-8.png", (446, 262), (650, 986), "Assets/Sonido-Boton-Click.mp3")
+
+Opciones_Seleccion = {
+    "Par de tarjetas 1": Seleccion_1_img,
+    "Par de tarjetas 2": Seleccion_2_img,
+    "Par de tarjetas 3": Seleccion_3_img,
+    "Par de tarjetas 4": Seleccion_4_img,
+    "Par de tarjetas 5": Seleccion_5_img,
+    "Par de tarjetas 6": Seleccion_6_img,
+    "Par de tarjetas 7": Seleccion_7_img,
+    "Par de tarjetas 8": Seleccion_8_img
+}
+
+Scroll_Y_Tarjetas = 0
+Altura_Lista_Tarjetas = 1268
+
 Fuente = pygame.font.Font("Assets/ElmsSans-Medium.ttf", 30)
 Fuente_Negrita = pygame.font.Font("Assets/ElmsSans-ExtraBold.ttf", 30)
 
@@ -59,7 +82,7 @@ Escena_Actual = Escena_Menu
 
 Registrados = True
 Posicion_Y = 55
-Jugador_Elegido = []
+Jugador_Elegido = {}
 
 FR_Jugadores = '8s30s1s10s3s20s30s'
 TR_JUGADORES = struct.calcsize(FR_Jugadores)
@@ -240,8 +263,33 @@ while Corriendo:
                 Posicion_Y = Posicion_Y + 60
 
         elif (Escena_Actual == Escena_Seleccion_Tarjetas):
-            if (VOLVER_AL_INICIO_img.Es_Presionado):
+            if (VOLVER_AL_INICIO_img.Es_Presionado(event)):
                 Escena_Actual = Escena_Inicio
+            
+            if (event.type == pygame.MOUSEWHEEL): 
+                if (Altura_Lista_Tarjetas > Limite_Ventana):
+                    Desplazamiento = event.y * Velocidad_Scrolling
+                    Scroll_Y_Tarjetas = Scroll_Y_Tarjetas + Desplazamiento
+                
+                    if (Scroll_Y_Tarjetas < 0):
+                        Scroll_Y_Tarjetas = 0
+                    
+                    elif (Scroll_Y_Tarjetas < -Limite):
+                        Desplazamiento = -Limite - Scroll_Y_Tarjetas
+                        Scroll_Y_Tarjetas = -Limite
+                    
+                    else:
+                        Desplazamiento = -Scroll_Y_Tarjetas
+                        Scroll_Y_Tarjetas = 0
+                    
+                    for Opcion in Opciones_Seleccion:
+                        Opcion.Colision.y = Opcion.Colision.y + Desplazamiento
+
+                if (event.type == pygame.MOUSEBUTTONDOWN):
+                    if (event.button == 1):
+                        for Opcion in Opciones_Seleccion:
+                            if Opcion.Es_Presionado(event):
+                                Main.Main()
 
         elif (Escena_Actual == Escena_Registro):
             if (VOLVER_AL_MENU_img.Es_Presionado(event)):
@@ -284,6 +332,8 @@ while Corriendo:
     elif (Escena_Actual == Escena_Seleccion_Tarjetas):
         Ventana.blit(Fondo_Menu_Inicio_img, (0, 0))
         VOLVER_AL_INICIO_img.Dibujo(Ventana)
+        for Opcion in Opciones_Seleccion:
+            Opcion.Dibujo(Ventana)
 
     elif (Escena_Actual == Escena_Registro):
         Ventana.blit(Fondo_Menu_Inicio_img, (0, 0))
