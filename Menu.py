@@ -340,7 +340,11 @@ while Corriendo:
 
                                         Matriz_1_Llenada, _ = reto3.Llenado_Tarjetas(Matriz_1, Tamaño_Matriz)
                                         Matriz_2_Llenada, _ = reto3.Llenado_Tarjetas(Matriz_2, Tamaño_Matriz)
-                                        Main.Main(Matriz_1_Llenada, Matriz_2_Llenada)
+                                        
+                                        Nombre = Jugador_Seleccionado["Nombre"]
+                                        InicialEst = Jugador_Seleccionado["Inicial de Estado"]
+                                        
+                                        Main.Main(Matriz_1_Llenada, Matriz_2_Llenada, Titulo, Nombre, InicialEst)
 
         elif (Escena_Actual == Escena_Registro):
             if (VOLVER_AL_MENU_img.Es_Presionado(event)):

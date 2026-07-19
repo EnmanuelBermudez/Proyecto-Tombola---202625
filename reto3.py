@@ -203,6 +203,8 @@ def ejecutar_reto_3():
                 fecha_str = ahora.strftime("%d/%m/%Y %H:%M")
                 guardar_juego_binario(cedula_ingresada, fecha_str, secuencia_para_archivo, bolillos_sorteados)
                 print("Juego guardado en JUEGOS.bin")
+                
+    return gano
 
     opcion = input("\n¿Desea jugar otra vez? (S/N): ")
     if opcion.upper() == "S":
