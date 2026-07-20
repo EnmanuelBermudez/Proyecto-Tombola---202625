@@ -7,32 +7,34 @@ def Aux_Creación_Clave(Clave, Indice=0, Mayus=0, Minus=0, Num=0, Esp=0, Invalid
     Retorna una lista con los mensajes de Error de los criterios que no se cumplieron.
     """
     # Caso base: se recorrió toda la cadena de la Clave
-    if Indice == len(Clave):
+    if (Indice == len(Clave)):
         Errores = []
         
         # 1. Longitud entre 6 y 10 caracteres
         if not (6 <= len(Clave) <= 10):
-            Errores.append("[❌] Debe poseer entre 6 y 10 caracteres.")
+            Errores.append("[X] Longitud: 6 a 10 caracteres")
             
         # 2. Combinación de mayúsculas, minúsculas y números
         if Mayus == 0:
-            Errores.append("[❌] Debe contener al menos una letra mayúscula.")
+            Errores.append("[X] Falta al menos una letra mayúscula.")
+
         if Minus == 0:
-            Errores.append("[❌] Debe contener al menos una letra minúscula.")
+            Errores.append("[X] Falta al menos una letra minúscula.")
+            
         if Num == 0:
-            Errores.append("[❌] Debe contener al menos un número.")
+            Errores.append("[X] Falta al menos un número.")
             
         # 3. Caracteres inválidos (acentos, ñ, Ñ)
         if Invalidos > 0:
-            Errores.append("[❌] No debe contener letras con acentos ni la letra Ñ o ñ.")
+            Errores.append("[X] Sin acentos ni letras ñ/N.")
             
         # 4. Caracteres Especiales permitidos
         if Esp == 0:
-            Errores.append("[❌] Debe contener al menos uno de los siguientes caracteres Especiales: asterisco (*), igual (=), porcentaje (%) o guión bajo (_).")
+            Errores.append("[X] Requiere un caracter: * = % _")
             
         # 5. Máximo de caracteres consecutivos
         if Max_Consec > 3:
-            Errores.append("[❌] La Clave NO debe contener más de 3 caracteres iguales de forma consecutiva.")
+            Errores.append("[X] Máx 3 caracteres iguales seguidos.")
             
         return Errores
 
