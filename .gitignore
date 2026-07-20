@@ -4,6 +4,7 @@
 #Archivos del juego
 JUGADORES.bin
 JUEGOS.bin
+Registrador_de_Estados.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
