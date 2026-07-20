@@ -155,8 +155,8 @@ def Main_Menu():
     Inicial_Input = Dato_Jugador("Inicial de Estado:", (311, 80), (650, 300), "Grey50", Fuente, Fuente_Negrita)
     Clave_Input = Dato_Jugador("Clave:", (311, 80), (650, 480), "Grey50", Fuente, Fuente_Negrita)
 
-    Cedula_Validacion_Input = Dato_Jugador("Cédula:", (311, 80), (310, 120), "Grey50", Fuente, Fuente_Negrita)
-    Clave_Validacion_Input = Dato_Jugador("Clave:", (311, 80), (650, 480), "Grey50", Fuente, Fuente_Negrita)
+    Cedula_Validacion_Input = Dato_Jugador("Cédula:", (311, 80), (484, 250), "Grey50", Fuente, Fuente_Negrita)
+    Clave_Validacion_Input = Dato_Jugador("Clave:", (311, 80), (484, 400), "Grey50", Fuente, Fuente_Negrita)
 
     Verificacion = True
 
@@ -264,10 +264,13 @@ def Main_Menu():
     Render_Info = {}
     Render_Info_Top_5 = {}
     Altura_Info = 0
-    Altura_Top_5= 0
+    Altura_Top_5 = 0
     Partidas_Registradas = True
 
+    Registros = False
+
     if (os.path.isfile(AF_JUEGOS)) and (os.path.getsize(AF_JUEGOS) != 0):
+        True
         JUEGOS = open(AF_JUEGOS, 'rb')
         JUEGOS.seek(0)
         EOF_JUEGOS = False
@@ -335,13 +338,6 @@ def Main_Menu():
         
         Altura_Info = Posicion_Y_Reg - 250
 
-        Texto_Frecuencia_Inactivo = Fuente_Negrita.render("MAYOR FRECUENCIA", True, "Black")
-        Texto_Frecuencia_Activo = Fuente_Negrita.render("MAYOR FRECUENCIA", True, "Black")
-        Colision_Frecuencia = Texto_Frecuencia_Inactivo.get_rect(center = (426, 120))
-
-        Fecha_Inicial_Input = Dato_Jugador("Inicio [DD-MM-AAAA]:", (311, 80), (250, 180), "Grey50", Fuente, Fuente_Negrita)
-        Fecha_Final_Input = Dato_Jugador("Final [DD-MM-AAAA]:", (311, 80), (250, 180), "Grey50", Fuente, Fuente_Negrita)
-
         Posicion_Y_Reg = 250
         Contador_Top_5 = 0
 
@@ -365,10 +361,24 @@ def Main_Menu():
                 Posicion_Y_Reg = Posicion_Y_Reg + 80
             Contador_Top_5 = Contador_Top_5 + 1
         Altura_Top_5 = Posicion_Y_Reg - 250
+    else:
+        Partidas_Registradas = False
     
+    Texto_Frecuencia_Inactivo = Fuente_Negrita.render("MAYOR FRECUENCIA", True, "Black")
+    Texto_Frecuencia_Activo = Fuente_Negrita.render("MAYOR FRECUENCIA", True, "Black")
+    Colision_Frecuencia = Texto_Frecuencia_Inactivo.get_rect(center = (426, 120))
+
+    Fecha_Inicial_Input = Dato_Jugador("Inicio [DD-MM-AAAA]:", (311, 80), (250, 180), "Grey50", Fuente, Fuente_Negrita)
+    Fecha_Final_Input = Dato_Jugador("Final [DD-MM-AAAA]:", (311, 80), (250, 180), "Grey50", Fuente, Fuente_Negrita)
+
     Texto_Top_5_Inactivo = Fuente_Negrita.render("TOP 5", True, "Black")
     Texto_Top_5_Activo = Fuente_Negrita.render("TOP 5", True, "Black")
     Colision_Top_5 = Texto_Top_5_Inactivo.get_rect(center = (426, 120))
+
+    Texto_ERROR_1_Registro = Fuente_Negrita.render("[No se ha jugado ninguna partida].", True, "Black")
+    Texto_ERROR_2_Registro = Fuente_Negrita.render("¡Juega!", True, "Black")
+    Posicion_ERROR_1_Registro = Texto_ERROR_1_Registro.get_rect(center = (640, 360))
+    Posicion_ERROR_2_Registro = Texto_ERROR_2_Registro.get_rect(center = (640, 395))
 
     Filtro_Registro = "Todos"
     Scroll_Y_Registro = 0
@@ -443,7 +453,7 @@ def Main_Menu():
             elif (Escena_Actual == Escena_Registro_Usuarios):
                 Cedula_Input.Escritura(event, "Grey50", "White", Fuente, Fuente_Negrita, 14)
                 Nombre_Input.Escritura(event, "Grey50", "White", Fuente, Fuente_Negrita, 14)
-                Sexo_Input.Escritura(event, "Grey50", "White", Fuente, Fuente_Negrita, 14)
+                Sexo_Input.Escritura(event, "Grey50", "White", Fuente, Fuente_Negrita, 1)
                 Fecha_Input.Escritura(event, "Grey50", "White", Fuente, Fuente_Negrita, 14)
                 Inicial_Input.Escritura(event, "Grey50", "White", Fuente, Fuente_Negrita, 14)
                 Clave_Input.Escritura(event, "Grey50", "White", Fuente, Fuente_Negrita, 10)
@@ -502,8 +512,8 @@ def Main_Menu():
                         Clave_Input.Escrito = ""
 
             elif (Escena_Actual == Escena_Ingreso_Clave):
-                Cedula_Validacion_Input.Escritura(event, "Grey50", "White", Fuente, Fuente_Negrita, 2)
-                Clave_Validacion_Input.Escritura(event, "Grey50", "White", Fuente, Fuente_Negrita, 2)
+                Cedula_Validacion_Input.Escritura(event, "Grey50", "White", Fuente, Fuente_Negrita, 8)
+                Clave_Validacion_Input.Escritura(event, "Grey50", "White", Fuente, Fuente_Negrita, 10)
                 
                 if (VOLVER_AL_INICIO_img.Es_Presionado(event)):
                     Escena_Actual = Escena_Inicio
@@ -700,7 +710,7 @@ def Main_Menu():
             Clave_Validacion_Input.Dibujo(Ventana, 15, 18)
 
             if (Verificacion == False):
-                Ventana.blit(Texto_Error_Validacion, ())
+                Ventana.blit(Texto_Error_Validacion, (380, 520))
 
         elif (Escena_Actual == Escena_Seleccion_Tarjetas):
             Ventana.blit(Fondo_Menu_Inicio_img, (0, 0))
@@ -748,6 +758,9 @@ def Main_Menu():
                 for Objeto in Lista_Dibujo.values():
                     Ventana.blit(Objeto["Texto Info 1"], Objeto["Colision Info 1"])
                     Ventana.blit(Objeto["Texto Info 2"], Objeto["Colision Info 2"])
+            else:
+                Ventana.blit(Texto_ERROR_1, Posicion_ERROR_1)
+                Ventana.blit(Texto_ERROR_2, Posicion_ERROR_2)
 
         pygame.display.flip()
 
