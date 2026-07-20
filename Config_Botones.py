@@ -1,4 +1,4 @@
-import pygame
+import pygame, sys, os
 
 class Boton:
     def __init__ (self, Ruta_Imagen, Tamaño, Posicion, Ruta_Sonido):

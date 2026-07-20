@@ -1,4 +1,4 @@
-import pygame, sys, os, Registro_Jugadores
+import pygame, sys, os
 
 class Dato_Jugador:
     def __init__ (self, Texto, Tamaño, Posicion, Color_Inactivo, Fuente, Fuente_Negrita):
