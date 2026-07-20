@@ -42,7 +42,7 @@ def Main (Matriz_1, Matriz_2, Titulo, Nombre, InicialEst, Cedula):
     Icono = pygame.image.load("Assets/Tombola-Icono.png")
     pygame.display.set_icon(Icono)
 
-    Fondo_Juego_img = pygame.image.load("Assets/Fondo-Menu.png").convert()
+    Fondo_Juego_img = pygame.image.load("Assets/Fondo-Juego.png").convert()
     Fondo_Juego_img = pygame.transform.scale(Fondo_Juego_img, (1280, 720))
 
     Seguir_img = Boton("Assets/Boton-Seguir.png", (141, 141), (570, 290), "Assets/Sonido-Boton-Madera.mp3")
@@ -194,7 +194,7 @@ def Main (Matriz_1, Matriz_2, Titulo, Nombre, InicialEst, Cedula):
                         Puntos_Acumulados_TXT = Fuente_Negrita.render(f"[Puntos Acumulados: {Puntos_Acumulados}]", True, "Red")
 
                         Ahora = datetime.datetime.now()
-                        Fecha_STR = Ahora.strftime("%d/%m/%Y %H:%M")
+                        Fecha_STR = Ahora.strftime("%d-%m-%Y %H:%M")
                         reto3.guardar_juego_binario(Cedula, Fecha_STR, Sorteados_Tarjeta, Bolillos_Sorteados)
                         
                         Guardar_Juego = True

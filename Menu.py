@@ -3,6 +3,74 @@ import numpy as np
 from Config_Botones import Boton
 from Config_Reg_Jugadores import Dato_Jugador
 
+def Obtener_Mayor_Frecuencia(Fecha_Inicio_Input, Fecha_Fin_Input):
+    FR_Juegos = '8s20sii'
+    TR_Juegos = struct.calcsize(FR_Juegos)
+    AF_JUEGOS = "JUEGOS.bin"
+    Frecuencias = {}
+
+    Fecha_Inicial = datetime.datetime.strptime(Fecha_Inicio_Input, "%d-%m-%Y")
+    Fecha_Final = datetime.datetime.strptime(Fecha_Fin_Input, "%d-%m-%Y")
+
+    if (os.path.isfile(AF_JUEGOS)) and (os.path.getsize(AF_JUEGOS) != 0):
+        JUEGOS = open(AF_JUEGOS, 'rb')
+        JUEGOS.seek(0)
+        EOF_JUEGOS = False
+        
+        while (EOF_JUEGOS == False):
+            Juegos_Bytes = JUEGOS.read(TR_Juegos)
+
+            if (Juegos_Bytes):
+                _, FechaJugCodificado, Cantidad_Tarjetas, Cantidad_Bolillo = struct.unpack(FR_Juegos, Juegos_Bytes)                
+                Fecha_Juego_Str = FechaJugCodificado.decode('utf-8').strip()
+                Fecha_Juego = datetime.datetime.strptime(Fecha_Juego_Str, "%d/%m/%Y")
+
+                Puntos_Juego = 0
+                Contador_Tarjetas = 0
+
+                while (Contador_Tarjetas < Cantidad_Tarjetas):
+                    JUEGOS.read(4)
+                    Contador_Tarjetas = Contador_Tarjetas + 1
+                
+                Contador_Bolillos = 0
+                while (Contador_Bolillos < Cantidad_Bolillo):
+                    Num_Bytes = JUEGOS.read(4)
+                    Bolillo = struct.unpack('I', Num_Bytes)[0]
+
+                    if (Fecha_Inicial <= Fecha_Juego < Fecha_Final):
+                        if (Bolillo in Frecuencias):
+                            Frecuencias[Bolillo] = Frecuencias[Bolillo] + 1
+
+                        else:
+                            Frecuencias[Bolillo] = 1
+                    
+                    Contador_Bolillos = Contador_Bolillos + 1
+                
+            else:
+                EOF_JUEGOS = True
+            
+        JUEGOS.close()
+        
+        Resultados = []
+        for Llave, Valor in Frecuencias.items():
+            Resultados.append([Llave, Valor])
+        
+        for i in range(len(Resultados)):
+            for j in range (0, len(Resultados) - i - 1):
+                if (Resultados[j][1] < Resultados[j + 1][1]):
+                    Aux = Resultados[j]
+                    Resultados[j] = Resultados[j + 1]
+                    Resultados[j + 1] = Aux
+        
+        Mayor_Frecuencia = []
+        Contador = 0
+
+        while (Contador < 10) and (Contador < len(Resultados)):
+            Mayor_Frecuencia.append(Resultados[Contador])
+            Contador = Contador + 1
+
+        return Mayor_Frecuencia
+
 def Insercion_Directa(Arreglo, Columna = 0):
     for i in range (1, len(Arreglo)):
         Actual = Arreglo[i]
@@ -86,6 +154,13 @@ def Main_Menu():
     Fecha_Input = Dato_Jugador("Fecha de Nacimiento:", (311, 80), (650,120), "Grey50", Fuente, Fuente_Negrita)
     Inicial_Input = Dato_Jugador("Inicial de Estado:", (311, 80), (650, 300), "Grey50", Fuente, Fuente_Negrita)
     Clave_Input = Dato_Jugador("Clave:", (311, 80), (650, 480), "Grey50", Fuente, Fuente_Negrita)
+
+    Cedula_Validacion_Input = Dato_Jugador("Cédula:", (311, 80), (310, 120), "Grey50", Fuente, Fuente_Negrita)
+    Clave_Validacion_Input = Dato_Jugador("Clave:", (311, 80), (650, 480), "Grey50", Fuente, Fuente_Negrita)
+
+    Verificacion = True
+
+    Texto_Error_Validacion = Fuente_Negrita.render("[ERROR]: La clave o la cedula esta erroneas.", True, "Red")
 
     Tamaño_Matriz = None
 
@@ -226,7 +301,7 @@ def Main_Menu():
         Matriz_Info = np.empty((len(Info_Jugadores), 3), dtype = object)
         Indice_Arr = 0
 
-        for Cedula_Jugador, Datos in Lista_Jugadores.items():
+        for Cedula_Jugador, Datos in Info_Jugadores.items():
             Matriz_Info[Indice_Arr] = [Cedula_Jugador, Datos["Partidas"], Datos["Puntos"]]
             Indice_Arr = Indice_Arr + 1
 
@@ -257,6 +332,13 @@ def Main_Menu():
         
         Altura_Info = Posicion_Y_Reg - 250
 
+        Texto_Frecuencia_Inactivo = Fuente_Negrita.render("MAYOR FRECUENCIA", True, "Black")
+        Texto_Frecuencia_Activo = Fuente_Negrita.render("MAYOR FRECUENCIA", True, "Black")
+        Colision_Frecuencia = Texto_Frecuencia_Inactivo.get_rect(center = (426, 120))
+
+        Fecha_Inicial_Input = Dato_Jugador("Inicio [DD-MM-AAAA]:", (311, 80), (250, 180), "Grey50", Fuente, Fuente_Negrita)
+        Fecha_Final_Input = Dato_Jugador("Final [DD-MM-AAAA]:", (311, 80), (250, 180), "Grey50", Fuente, Fuente_Negrita)
+
         Posicion_Y_Reg = 250
         Contador_Top_5 = 0
 
@@ -285,10 +367,6 @@ def Main_Menu():
     Texto_Top_5_Activo = Fuente_Negrita.render("TOP 5", True, "Black")
     Colision_Top_5 = Texto_Top_5_Inactivo.get_rect(center = (426, 120))
 
-    Texto_Frecuencia_Inactivo = Fuente_Negrita.render("MAYOR FRECUENCIA", True, "Black")
-    Texto_Frecuencia_Activo = Fuente_Negrita.render("MAYOR FRECUENCIA", True, "Black")
-    Colision_Frecuencia = Texto_Top_5_Inactivo.get_rect(center = (426, 120))
-
     Filtro_Registro = "Todos"
     Scroll_Y_Registro = 0
 
@@ -296,6 +374,7 @@ def Main_Menu():
     Escena_Inicio = "Inicio"
     Escena_Registro = "Registro"
     Escena_Registro_Usuarios = "Registro_Usuarios"
+    Escena_Ingreso_Clave = "Ingreso Clave"
     Escena_Confirmacion_Datos = "Confirmación_Datos"
     Escena_Seleccion_Tarjetas = "Seleccion_Tarjetas"
     Escena_Actual = Escena_Menu
@@ -395,8 +474,8 @@ def Main_Menu():
                             "Clave": Clave,
                         }
 
-                        Texto_Registrados_1 = Fuente_Negrita.render(f"{Jugador['Cedula']} | {Jugador['Nombre']}", True, "Black")
-                        Texto_Registrados_2 = Fuente.render(f"Sexo: {Jugador['Sexo']} | Est. {Jugador['Estado']} [{Jugador['Inicial de Estado']}]", True, "Black")
+                        Texto_Registrados_1 = Fuente_Negrita.render(f"{Jugador_Nuevo['Cedula']} | {Jugador_Nuevo['Nombre']}", True, "Black")
+                        Texto_Registrados_2 = Fuente.render(f"Sexo: {Jugador_Nuevo['Sexo']} | Est. {Jugador_Nuevo['Estado']} [{Jugador_Nuevo['Inicial de Estado']}]", True, "Black")
                         Posicion_RegJG_1 = Texto_Registrados_1.get_rect(center = (640, Posicion_Y))
                         Posicion_RegJG_2 = Texto_Registrados_2.get_rect(center = (640, Posicion_Y + 35))
 
@@ -418,6 +497,22 @@ def Main_Menu():
                         Fecha_Input.Escrito = ""
                         Inicial_Input.Escrito = ""
                         Clave_Input.Escrito = ""
+
+            elif (Escena_Actual == Escena_Ingreso_Clave):
+                Verificacion = True
+
+                Cedula_Validacion_Input.Escritura(event, "Grey50", "White", Fuente, Fuente_Negrita, 2)
+                Clave_Validacion_Input.Escritura(event, "Grey50", "White", Fuente, Fuente_Negrita, 2)
+                
+                if (VOLVER_AL_INICIO_img.Es_Presionado(event)):
+                    Escena_Actual = Escena_Inicio
+                
+                elif (ACEPTAR_img.Es_Presionado(event)):
+                    if ((Cedula_Validacion_Input.Escrito == Jugador_Seleccionado["Cedula"]) and (Clave_Validacion_Input.Escrito == Jugador_Seleccionado['Clave'])):
+                        Escena_Actual = Escena_Seleccion_Tarjetas
+                        Verificacion = True
+                    else:
+                        Verificacion = False
 
             elif (Escena_Actual == Escena_Seleccion_Tarjetas):
                 if (VOLVER_AL_INICIO_img.Es_Presionado(event)):
@@ -593,7 +688,18 @@ def Main_Menu():
                 Colision_Error = Render_Error_Clave.get_rect(topleft = (650, Posicion_Y_Error))
                 Ventana.blit(Render_Error_Clave, Colision_Error)
                 Posicion_Y_Error = Posicion_Y_Error + 20
-            
+        
+        elif (Escena_Actual == Escena_Ingreso_Clave):
+            Ventana.blit(Fondo_Menu_Registro_img, (0, 0))
+            VOLVER_AL_INICIO_img.Dibujo(Ventana)
+            ACEPTAR_img.Dibujo(Ventana)
+
+            Cedula_Validacion_Input.Dibujo(Ventana)
+            Clave_Validacion_Input.Dibujo(Ventana)
+
+            If (Verificacion == False):
+                Ventana.blit(Texto_Error_Validacion, ())
+
         elif (Escena_Actual == Escena_Seleccion_Tarjetas):
             Ventana.blit(Fondo_Menu_Inicio_img, (0, 0))
             VOLVER_AL_INICIO_img.Dibujo(Ventana)
@@ -630,10 +736,12 @@ def Main_Menu():
             elif (Filtro_Registro == "Frecuencia"):
                 Ventana.blit(Texto_Top_5_Inactivo, Colision_Top_5)
                 Ventana.blit(Texto_Frecuencia_Activo, Colision_Frecuencia)
+                Lista_Dibujo = {}
             
             else:
                 Ventana.blit(Texto_Top_5_Inactivo, Colision_Top_5)
                 Ventana.blit(Texto_Frecuencia_Inactivo, Colision_Frecuencia)
+                Lista_Dibujo = Render_Info
             
             for Objeto in Lista_Dibujo.values():
                 Ventana.blit(Objeto["Texto Info 1"], Objeto["Colision Info 1"])
