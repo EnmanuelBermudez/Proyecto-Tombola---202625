@@ -1,4 +1,4 @@
-import pygame, struct, sys, os, Registro_Jugadores, reto2, reto3, Main
+import pygame, struct, sys, datetime, os, Reto_1, Reto_2, Reto_3, Main
 import numpy as np
 from Config_Botones import Boton
 from Config_Reg_Jugadores import Dato_Jugador
@@ -260,6 +260,12 @@ def Main_Menu():
             "Partidas": 0,
             "Puntos": 0
         }
+    
+    Render_Info = {}
+    Render_Info_Top_5 = {}
+    Altura_Info = 0
+    Altura_Top_5= 0
+    Partidas_Registradas = True
 
     if (os.path.isfile(AF_JUEGOS)) and (os.path.getsize(AF_JUEGOS) != 0):
         JUEGOS = open(AF_JUEGOS, 'rb')
@@ -306,9 +312,6 @@ def Main_Menu():
             Indice_Arr = Indice_Arr + 1
 
         Matriz_Top_5 = Insercion_Directa(Matriz_Info.copy(), 2)
-
-        Render_Info = {}
-        Render_Info_Top_5 = {}
 
         Posicion_Y_Reg = 250
 
@@ -435,7 +438,7 @@ def Main_Menu():
                             for Seleccion in Jugador_Elegido.values():
                                 if (Seleccion["Posicion 1"].collidepoint(event.pos)) or (Seleccion["Posicion 2"].collidepoint(event.pos)):
                                     Jugador_Seleccionado = Seleccion["Elegido"]
-                                    Escena_Actual = Escena_Seleccion_Tarjetas
+                                    Escena_Actual = Escena_Ingreso_Clave
             
             elif (Escena_Actual == Escena_Registro_Usuarios):
                 Cedula_Input.Escritura(event, "Grey50", "White", Fuente, Fuente_Negrita, 14)
@@ -449,7 +452,7 @@ def Main_Menu():
                     Escena_Actual = Escena_Inicio
                 
                 elif (ACEPTAR_img.Es_Presionado(event)):
-                    Errores_Clave = Registro_Jugadores.Aux_Creación_Clave(Clave_Input.Escrito)
+                    Errores_Clave = Reto_1.Aux_Creación_Clave(Clave_Input.Escrito)
 
                     if (len(Errores_Clave) == 0):
                         Cedula = Cedula_Input.Escrito
@@ -459,7 +462,7 @@ def Main_Menu():
                         Inicial = Inicial_Input.Escrito
                         Clave = Clave_Input.Escrito
                         Estado = ""
-                        Registro_Jugadores.Registro_Jugadores(Cedula, Nombre, Sexo, FechaNacimiento, Inicial, Clave)
+                        Reto_1.Registro_Jugadores(Cedula, Nombre, Sexo, FechaNacimiento, Inicial, Clave)
                         
                         Registrados = True
                         Escena_Actual = Escena_Inicio
@@ -499,8 +502,6 @@ def Main_Menu():
                         Clave_Input.Escrito = ""
 
             elif (Escena_Actual == Escena_Ingreso_Clave):
-                Verificacion = True
-
                 Cedula_Validacion_Input.Escritura(event, "Grey50", "White", Fuente, Fuente_Negrita, 2)
                 Clave_Validacion_Input.Escritura(event, "Grey50", "White", Fuente, Fuente_Negrita, 2)
                 
@@ -566,7 +567,7 @@ def Main_Menu():
 
                             if (Tamaño_Matriz != None) and (ERROR_Matriz_1 == False) and (ERROR_Matriz_2 == False):
                                 Tamaño_Matriz = Tamaño_Ingresado
-                                Diccionario_ODS = reto2.Seleccion_ODS_Dict(Tamaño_Matriz)
+                                Diccionario_ODS = Reto_2.Seleccion_ODS_Dict(Tamaño_Matriz)
 
                                 for Llave, Opcion in Opciones_Seleccion.items():
                                     if Opcion.Es_Presionado(event):
@@ -576,8 +577,8 @@ def Main_Menu():
                                             Matriz_1, Matriz_2, Titulo = Diccionario_ODS[ODS_Seleccion]
                                             print(f"Seleccionado: {Titulo}")
 
-                                            Matriz_1_Llenada, _ = reto3.Llenado_Tarjetas(Matriz_1, Tamaño_Matriz)
-                                            Matriz_2_Llenada, _ = reto3.Llenado_Tarjetas(Matriz_2, Tamaño_Matriz)
+                                            Matriz_1_Llenada, _ = Reto_3.Llenado_Tarjetas(Matriz_1, Tamaño_Matriz)
+                                            Matriz_2_Llenada, _ = Reto_3.Llenado_Tarjetas(Matriz_2, Tamaño_Matriz)
                                             
                                             Nombre = Jugador_Seleccionado["Nombre"]
                                             InicialEst = Jugador_Seleccionado["Inicial de Estado"]
@@ -590,61 +591,62 @@ def Main_Menu():
                     print("VOLVER AL MENU")
                     Escena_Actual = Escena_Menu
                 
-                if (event.type == pygame.MOUSEBUTTONDOWN):
-                    if(event.button == 1):
-                        if (Colision_Top_5.collidepoint(event.pos)):
+                if (Partidas_Registradas):
+                    if (event.type == pygame.MOUSEBUTTONDOWN):
+                        if(event.button == 1):
+                            if (Colision_Top_5.collidepoint(event.pos)):
+                                
+                                if (Filtro_Registro == "TOP 5"):
+                                    Filtro_Registro = "Todos"
+                                
+                                else:
+                                    Filtro_Registro = "TOP 5"
+                                
+                                Scroll_Y_Registro = 0
 
-                            if (Filtro_Registro == "TOP 5"):
-                                Filtro_Registro = "Todos"
+                            elif (Colision_Frecuencia.collidepoint(event.pos)):
+                                if (Filtro_Registro == "Frecuencia"):
+                                    Filtro_Registro = "Todos"
+                                
+                                else:
+                                    Filtro_Registro = "Frecuencia"
                             
-                            else:
-                                Filtro_Registro = "TOP 5"
+                                Scroll_Y_Registro = 0
                             
-                            Scroll_Y_Registro = 0
+                            for Objeto in Render_Info.values():
+                                Objeto["Colision Info 1"].y = Objeto["Y Base 1"]
+                                Objeto["Colision Info 2"].y = Objeto["Y Base 2"]
 
-                        elif (Colision_Frecuencia.collidepoint(event.pos)):
-                            if (Filtro_Registro == "Frecuencia"):
-                                Filtro_Registro = "Todos"
+                            for Objeto in Render_Info_Top_5.values():
+                                Objeto["Colision Info 1"].y = Objeto["Y Base 1"]
+                                Objeto["Colision Info 2"].y = Objeto["Y Base 2"]
+
+                    if (event.type == pygame.MOUSEWHEEL):
+                        if (Filtro_Registro == "TOP 5"):
+                            Lista_Scroll = Render_Info_Top_5
+                            Altura_Scroll = Altura_Top_5
+                        else:
+                            Lista_Scroll = Render_Info
+                            Altura_Scroll = Altura_Info
+                        
+                        if (Altura_Scroll > Limite_Ventana):
+                            Desplazamiento = event.y * Velocidad_Scrolling
+                            Scroll_Y_Registro = Scroll_Y_Registro + Desplazamiento
+
+                            if (Scroll_Y_Registro < 0):
+                                Scroll_Y_Registro = 0
                             
-                            else:
-                                Filtro_Registro = "Frecuencia"
-                        
-                            Scroll_Y_Registro = 0
-                        
-                        for Objeto in Render_Info.values():
-                            Objeto["Colision Info 1"].y = Objeto["Y Base 1"]
-                            Objeto["Colision Info 2"].y = Objeto["Y Base 2"]
+                            Limite = Altura_Scroll - Limite_Ventana
 
-                        for Objeto in Render_Info_Top_5.values():
-                            Objeto["Colision Info 1"].y = Objeto["Y Base 1"]
-                            Objeto["Colision Info 2"].y = Objeto["Y Base 2"]
+                            if (Limite < 0):
+                                Limite = 0
 
-                if (event.type == pygame.MOUSEWHEEL):
-                    if (Filtro_Registro == "TOP 5"):
-                        Lista_Scroll = Render_Info_Top_5
-                        Altura_Scroll = Altura_Top_5
-                    else:
-                        Lista_Scroll = Render_Info
-                        Altura_Scroll = Altura_Info
-                    
-                    if (Altura_Scroll > Limite_Ventana):
-                        Desplazamiento = event.y * Velocidad_Scrolling
-                        Scroll_Y_Registro = Scroll_Y_Registro + Desplazamiento
-
-                        if (Scroll_Y_Registro < 0):
-                            Scroll_Y_Registro = 0
-                        
-                        Limite = Altura_Scroll - Limite_Ventana
-
-                        if (Limite < 0):
-                            Limite = 0
-
-                        if (Scroll_Y_Registro < Limite):
-                            Scroll_Y_Registro = Limite
-                        
-                        for Movimiento in Lista_Scroll.values():
-                            Movimiento["Colision Info 1"].y = Movimiento["Colision Info 1"].y + Desplazamiento
-                            Movimiento["Colision Info 2"].y = Movimiento["Colision Info 2"].y + Desplazamiento
+                            if (Scroll_Y_Registro < Limite):
+                                Scroll_Y_Registro = Limite
+                            
+                            for Movimiento in Lista_Scroll.values():
+                                Movimiento["Colision Info 1"].y = Movimiento["Colision Info 1"].y + Desplazamiento
+                                Movimiento["Colision Info 2"].y = Movimiento["Colision Info 2"].y + Desplazamiento
                         
         if (Escena_Actual == Escena_Menu):
 
@@ -679,7 +681,7 @@ def Main_Menu():
             Inicial_Input.Dibujo(Ventana, 15, 18)
             Clave_Input.Dibujo(Ventana, 15, 18)
 
-            Errores_Clave = Registro_Jugadores.Aux_Creación_Clave(Clave_Input.Escrito)
+            Errores_Clave = Reto_1.Aux_Creación_Clave(Clave_Input.Escrito)
 
             Posicion_Y_Error = 565
 
@@ -694,10 +696,10 @@ def Main_Menu():
             VOLVER_AL_INICIO_img.Dibujo(Ventana)
             ACEPTAR_img.Dibujo(Ventana)
 
-            Cedula_Validacion_Input.Dibujo(Ventana)
-            Clave_Validacion_Input.Dibujo(Ventana)
+            Cedula_Validacion_Input.Dibujo(Ventana, 15, 18)
+            Clave_Validacion_Input.Dibujo(Ventana, 15, 18)
 
-            If (Verificacion == False):
+            if (Verificacion == False):
                 Ventana.blit(Texto_Error_Validacion, ())
 
         elif (Escena_Actual == Escena_Seleccion_Tarjetas):
@@ -727,25 +729,25 @@ def Main_Menu():
         elif (Escena_Actual == Escena_Registro):
             Ventana.blit(Fondo_Menu_Inicio_img, (0, 0))
             VOLVER_AL_MENU_img.Dibujo(Ventana)
-
-            if (Filtro_Registro == "TOP 5"):
-                Ventana.blit(Texto_Top_5_Activo, Colision_Top_5)
-                Ventana.blit(Texto_Frecuencia_Inactivo, Colision_Frecuencia)
-                Lista_Dibujo = Render_Info_Top_5 
-            
-            elif (Filtro_Registro == "Frecuencia"):
-                Ventana.blit(Texto_Top_5_Inactivo, Colision_Top_5)
-                Ventana.blit(Texto_Frecuencia_Activo, Colision_Frecuencia)
-                Lista_Dibujo = {}
-            
-            else:
-                Ventana.blit(Texto_Top_5_Inactivo, Colision_Top_5)
-                Ventana.blit(Texto_Frecuencia_Inactivo, Colision_Frecuencia)
-                Lista_Dibujo = Render_Info
-            
-            for Objeto in Lista_Dibujo.values():
-                Ventana.blit(Objeto["Texto Info 1"], Objeto["Colision Info 1"])
-                Ventana.blit(Objeto["Texto Info 2"], Objeto["Colision Info 2"])
+            if (Partidas_Registradas):
+                if (Filtro_Registro == "TOP 5"):
+                    Ventana.blit(Texto_Top_5_Activo, Colision_Top_5)
+                    Ventana.blit(Texto_Frecuencia_Inactivo, Colision_Frecuencia)
+                    Lista_Dibujo = Render_Info_Top_5 
+                
+                elif (Filtro_Registro == "Frecuencia"):
+                    Ventana.blit(Texto_Top_5_Inactivo, Colision_Top_5)
+                    Ventana.blit(Texto_Frecuencia_Activo, Colision_Frecuencia)
+                    Lista_Dibujo = {}
+                
+                else:
+                    Ventana.blit(Texto_Top_5_Inactivo, Colision_Top_5)
+                    Ventana.blit(Texto_Frecuencia_Inactivo, Colision_Frecuencia)
+                    Lista_Dibujo = Render_Info
+                
+                for Objeto in Lista_Dibujo.values():
+                    Ventana.blit(Objeto["Texto Info 1"], Objeto["Colision Info 1"])
+                    Ventana.blit(Objeto["Texto Info 2"], Objeto["Colision Info 2"])
 
         pygame.display.flip()
 

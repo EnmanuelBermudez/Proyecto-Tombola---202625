@@ -1,4 +1,4 @@
-import pygame, struct, random, datetime, sys, os, reto2, reto3, Menu
+import pygame, struct, random, datetime, sys, os, Reto_2, Reto_3, Menu
 from Config_Botones import Boton
 import numpy as np
 
@@ -195,7 +195,7 @@ def Main (Matriz_1, Matriz_2, Titulo, Nombre, InicialEst, Cedula):
 
                         Ahora = datetime.datetime.now()
                         Fecha_STR = Ahora.strftime("%d-%m-%Y %H:%M")
-                        reto3.guardar_juego_binario(Cedula, Fecha_STR, Sorteados_Tarjeta, Bolillos_Sorteados)
+                        Reto_3.guardar_juego_binario(Cedula, Fecha_STR, Sorteados_Tarjeta, Bolillos_Sorteados)
                         
                         Guardar_Juego = True
 
@@ -208,7 +208,7 @@ def Main (Matriz_1, Matriz_2, Titulo, Nombre, InicialEst, Cedula):
         Colision_Num_Sorteados = Render_Num_Sorteados.get_rect(center = (640, 20))
 
         if (VOLVER_AL_MENU_img.Es_Presionado(event)):
-            Menu.Main_Menu()
+            Corriendo = False
 
         Ventana.blit(Fondo_Juego_img, (0, 0))
         Seguir_img.Dibujo(Ventana)
