@@ -1,3 +1,10 @@
+# Cambios en VS Code
+.vscode
+
+#Archivos del juego
+JUGADORES.bin
+JUEGOS.bin
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
